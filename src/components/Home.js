@@ -14,10 +14,7 @@ import "@reach/combobox/styles.css";
 function calculateTotalDistance(directions) {
   let totalDistance = 0;
   for (const dir of directions) {
-    const route = dir.routes[0];
-    for (const leg of route.legs) {
-      totalDistance += leg.distance.value;
-    }
+    totalDistance += dir.routes[0].legs[0].distance.value;
   }
   return totalDistance;
 }
@@ -41,6 +38,7 @@ function Map() {
     const service = new window.google.maps.DirectionsService();
   
     useEffect(() => {
+      setDirections([])
       for (let i = 0; i < selected.length - 1; i++) {
         const from = selected[i];
         const to = selected[i + 1];

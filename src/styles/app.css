@@ -65,9 +65,9 @@ a {
   }
 
   .location-container-distance{
-    width: 200px;
+    width: 170px;
     padding: 10px;
-    border-radius: 20px;
+    border-radius: 0px;
     margin: 10px;
     font-size: small;
   }
@@ -78,7 +78,7 @@ a {
 
   .location-container {
     position: absolute;
-    top: 5px;
+    top: 0px;
     left: 180px;
     z-index: 10;
   }
