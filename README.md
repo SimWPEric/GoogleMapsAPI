@@ -1,5 +1,7 @@
 # React Google Maps Directions App
 
+Deployed website: https://g-maps.vercel.app
+
 ![image](https://github.com/SimWPEric/GoogleMapsAPI/assets/122194518/1e16ea65-2e41-4ee6-a378-373955b2825b)
 
 This is a React web application that allows users to select multiple locations and get driving directions between them using the Google Maps API. The app uses the @react-google-maps/api library for map rendering and the use-places-autocomplete library for location autocomplete functionality.
