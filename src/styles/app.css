@@ -35,7 +35,8 @@ a {
 
 .combobox-input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 10px;
+  border-radius: 20px;
 }
 
 .location-container {
@@ -49,12 +50,28 @@ a {
   background-color: lightgray;
 }
 
-.location-container-item {
+.location-container-item,
+.location-container-distance {
   background-color: white;
   width: 300px;
-  display: flex;
-  flex-direction: column;
   padding: 10px;
   border-radius: 20px;
   margin: 10px;
+}
+
+@media (max-width: 800px) {
+  .places-container {
+    top: auto;
+    bottom: 10px;
+    left: 50%;
+  }
+
+  .location-container-item,
+  .location-container-distance{
+    width: 200px;
+    padding: 10px;
+    border-radius: 20px;
+    margin: 10px;
+    font-size: small;
+  }
 }

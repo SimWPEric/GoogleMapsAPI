@@ -10,8 +10,18 @@ import {
 	ComboboxOptionText,
 } from "@reach/combobox"; // to display results and user input 
 import "@reach/combobox/styles.css";
- 
 
+function calculateTotalDistance(directions) {
+  let totalDistance = 0;
+  for (const dir of directions) {
+    const route = dir.routes[0];
+    for (const leg of route.legs) {
+      totalDistance += leg.distance.value;
+    }
+  }
+  return totalDistance;
+}
+ 
 function Home() {
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_API_KEY,
@@ -66,6 +76,9 @@ function Map() {
         </div>
 
         <div className="location-container">
+            <div className="location-container-distance">
+              {`Total distance: ${(calculateTotalDistance(directions) / 1000).toFixed(2)} km`}
+            </div>
             {locations.map((locationName, index) => (
                 <div className="location-container-item" onClick={() => handleSelectLocation(locationName)}>
                     {locationName}
@@ -80,6 +93,7 @@ function Map() {
                     <DirectionsRenderer 
                         directions={dir} 
                         options={{
+                            suppressMarkers: true,
                             polylineOptions: {
                                 strokeColor: "blue",
                                 strokeOpacity: 0.8,
@@ -89,8 +103,15 @@ function Map() {
                     /> 
                 </>
             ))}
-          {selected.map((x) => (
-            <Marker key={x.lat + x.lng} position={x} />
+          {selected.map((x, index) => (
+            <Marker 
+              key={index} 
+              position={x} 
+              label={{
+                text: String.fromCharCode(65 + index),
+                color: "white"
+              }}
+            />
           ))}
         </GoogleMap>
       </>
@@ -121,25 +142,25 @@ function PlacesAutoComplete( {setSelected, setLocations } ) {
     }
 
     return (
-        <Combobox onSelect={handleSelect}>
-            <ComboboxInput 
-                value={value} 
-                onChange={e => setValue(e.target.value)} 
-                disabled={!ready}
-                className="combobox-input"
-                placeholder="Search an address"
-            />
-            <ComboboxPopover>
-                <ComboboxList>
-                    {status === "OK" && data.map(({place_id, description}) => 
-                        <ComboboxOption 
-                            key={place_id}
-                            value={description}
-                        />
-                    )}
-                </ComboboxList>
-            </ComboboxPopover>
-        </Combobox>
+      <Combobox onSelect={handleSelect}>
+          <ComboboxInput 
+              value={value} 
+              onChange={e => setValue(e.target.value)} 
+              disabled={!ready}
+              className="combobox-input"
+              placeholder="Search an address"
+          />
+          <ComboboxPopover>
+              <ComboboxList>
+                  {status === "OK" && data.map(({place_id, description}) => 
+                      <ComboboxOption 
+                          key={place_id}
+                          value={description}
+                      />
+                  )}
+              </ComboboxList>
+          </ComboboxPopover>
+      </Combobox>
     )
 }
 
