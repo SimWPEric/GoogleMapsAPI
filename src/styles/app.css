@@ -59,19 +59,22 @@ a {
   margin: 10px;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 700px) {
   .places-container {
     top: auto;
-    bottom: 10px;
+    bottom: 5px;
     left: 50%;
   }
 
-  .location-container-item,
   .location-container-distance{
     width: 200px;
     padding: 10px;
     border-radius: 20px;
     margin: 10px;
     font-size: small;
+  }
+  
+  .location-container-item {
+    display: none;
   }
 }
