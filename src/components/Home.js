@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
+import { useMemo, useState, useEffect } from "react";
+import { GoogleMap, useLoadScript, Marker, DirectionsRenderer} from "@react-google-maps/api";
 import usePlacesAutocomplete, {getGeocode, getLatLng} from "use-places-autocomplete";
 import {
 	Combobox,
@@ -10,6 +10,7 @@ import {
 	ComboboxOptionText,
 } from "@reach/combobox"; // to display results and user input 
 import "@reach/combobox/styles.css";
+ 
 
 function Home() {
     const { isLoaded } = useLoadScript({
@@ -22,25 +23,69 @@ function Home() {
 }
 
 function Map() {
-    const center = useMemo (() => ({lat:1.418000, lng: 103.828650}), []);
+    const center = useMemo(() => ({ lat: 1.418000, lng: 103.828650 }), []);
     const [selected, setSelected] = useState([]);
-    console.log(selected);
+    const [directions, setDirections] = useState([]);
+    const service = new window.google.maps.DirectionsService();
+  
+    const generateLabel = (index) => {
+      return String.fromCharCode(65 + index);
+    };
+  
+    useEffect(() => {
+      for (let i = 0; i < selected.length - 1; i++) {
+        const from = selected[i];
+        const to = selected[i + 1];
+        service.route(
+          {
+            origin: from,
+            destination: to,
+            travelMode: window.google.maps.TravelMode.DRIVING
+          },
+          (result, status) => {
+            if (status === "OK" && result) {
+              setDirections((list) => [...list, result]);
+            }
+          }
+        );
+      }
+    }, [selected.length]);
+  
     return (
-        <>
-            <div className="places-container">
-                <PlacesAutoComplete setSelected={setSelected} />
-            </div>
-
-            <GoogleMap 
-                zoom={10} 
-                center={center} 
-                mapContainerClassName="map-container"
-            >
-                {selected.map((x) => <Marker position={x} />)} 
-            </GoogleMap>
-        </>
-    )
-}
+      <>
+        <div className="places-container">
+          <PlacesAutoComplete setSelected={setSelected} />
+        </div>
+  
+        <GoogleMap zoom={10} center={center} mapContainerClassName="map-container">
+          {directions &&
+            directions.map((dir, index) => (
+                <>
+                    <DirectionsRenderer 
+                        directions={dir} 
+                        suppressMarkers={true}
+                    />
+                    <CustomMarker key={index} position={selected[index]} label={generateLabel(index)} />
+                </>
+            ))}
+          {selected.map((x) => (
+            <Marker key={x.lat + x.lng} position={x} />
+          ))}
+        </GoogleMap>
+      </>
+    );
+  }
+  
+  const CustomMarker = ({ position, label }) => {
+    const markerOptions = {
+      label: {
+        text: label,
+        color: "white",
+      },
+    };
+  
+    return <Marker position={position} options={markerOptions} />;
+  };
 
 function PlacesAutoComplete( {setSelected } ) {
     const {
@@ -52,6 +97,7 @@ function PlacesAutoComplete( {setSelected } ) {
     } = usePlacesAutocomplete();
     
     const handleSelect = async (address) => {
+        alert(address)
         setValue(address, false);
         clearSuggestions(); 
 
@@ -61,6 +107,7 @@ function PlacesAutoComplete( {setSelected } ) {
         console.log(`results: ${results}`)
         const {lat, lng} = await getLatLng(results[0]);
         setSelected((list) => [...list, {lat, lng}])
+        setValue("")
     }
 
     return (
