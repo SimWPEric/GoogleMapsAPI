@@ -23,14 +23,12 @@ function Home() {
 }
 
 function Map() {
-    const center = useMemo(() => ({ lat: 1.418000, lng: 103.828650 }), []);
-    const [selected, setSelected] = useState([]);
+    const [center, setCenter] = useState({ lat: 1.3521, lng: 103.8198 });
+    const [zoom, setZoom] = useState(12);
+    const [selected, setSelected] = useState([]); // contains {lat, lng}
     const [directions, setDirections] = useState([]);
+    const [locations, setLocations] = useState([]); // contains address name 
     const service = new window.google.maps.DirectionsService();
-  
-    const generateLabel = (index) => {
-      return String.fromCharCode(65 + index);
-    };
   
     useEffect(() => {
       for (let i = 0; i < selected.length - 1; i++) {
@@ -50,22 +48,45 @@ function Map() {
         );
       }
     }, [selected.length]);
-  
+
+    const handleSelectLocation = async (address) => {
+        setZoom(12)
+        setTimeout(() => {
+            setZoom(15); 
+        }, 700);
+        const results = await getGeocode( {address} );
+        const {lat, lng} = await getLatLng(results[0]);
+        setCenter({lat, lng});
+    }
+    
     return (
       <>
         <div className="places-container">
-          <PlacesAutoComplete setSelected={setSelected} />
+          <PlacesAutoComplete setSelected={setSelected} setLocations={setLocations} />
+        </div>
+
+        <div className="location-container">
+            {locations.map((locationName, index) => (
+                <div className="location-container-item" onClick={() => handleSelectLocation(locationName)}>
+                    {locationName}
+                </div>
+            ))}
         </div>
   
-        <GoogleMap zoom={10} center={center} mapContainerClassName="map-container">
+        <GoogleMap zoom={zoom} center={center} mapContainerClassName="map-container">
           {directions &&
             directions.map((dir, index) => (
                 <>
                     <DirectionsRenderer 
                         directions={dir} 
-                        suppressMarkers={true}
-                    />
-                    <CustomMarker key={index} position={selected[index]} label={generateLabel(index)} />
+                        options={{
+                            polylineOptions: {
+                                strokeColor: "blue",
+                                strokeOpacity: 0.8,
+                                strokeWeight: 3
+                            }
+                        }}
+                    /> 
                 </>
             ))}
           {selected.map((x) => (
@@ -75,19 +96,8 @@ function Map() {
       </>
     );
   }
-  
-  const CustomMarker = ({ position, label }) => {
-    const markerOptions = {
-      label: {
-        text: label,
-        color: "white",
-      },
-    };
-  
-    return <Marker position={position} options={markerOptions} />;
-  };
 
-function PlacesAutoComplete( {setSelected } ) {
+function PlacesAutoComplete( {setSelected, setLocations } ) {
     const {
         ready,
         value,
@@ -97,17 +107,17 @@ function PlacesAutoComplete( {setSelected } ) {
     } = usePlacesAutocomplete();
     
     const handleSelect = async (address) => {
-        alert(address)
         setValue(address, false);
         clearSuggestions(); 
 
         // address -> geocode -> lat lng 
         
         const results = await getGeocode( {address} );
-        console.log(`results: ${results}`)
         const {lat, lng} = await getLatLng(results[0]);
         setSelected((list) => [...list, {lat, lng}])
-        setValue("")
+
+        setValue("") 
+        setLocations((list) => [...list, address])
     }
 
     return (

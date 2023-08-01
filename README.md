@@ -1,70 +1,60 @@
-# Getting Started with Create React App
+### React Google Maps Directions App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a React web application that allows users to select multiple locations and get driving directions between them using the Google Maps API. The app uses the @react-google-maps/api library for map rendering and the use-places-autocomplete library for location autocomplete functionality.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+Search and select multiple locations using the Places Autocomplete feature.
+Display markers on the map for the selected locations.
+Show driving directions between consecutive selected locations on the map.
+## Prerequisites
 
-### `npm start`
+Before running the application, make sure you have the following:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Node.js and npm installed on your system.
+Google Maps API key. You can obtain it from the Google Cloud Console.
+Getting Started
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Follow the steps below to set up and run the application:
 
-### `npm test`
+Clone this repository to your local machine.
+`git clone <repository-url>`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Navigate to the project directory.
+`cd react-google-maps-directions-app`
 
-### `npm run build`
+Install the dependencies.
+`npm install`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Create a .env file in the project root and add your Google Maps API key.
+`REACT_APP_API_KEY=YOUR_GOOGLE_MAPS_API_KEY`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Start the development server.
+`npm start`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Open your browser and visit http://localhost:3000 to see the application running.
 
-### `npm run eject`
+## Usage
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Search for a location: Type the name or address of a location in the search box, and the app will suggest matching locations based on the input.
+Select locations: Click on a suggestion to select a location. You can select multiple locations to get driving directions between them.
+View driving directions: After selecting multiple locations, the app will display driving directions on the map between consecutive locations. Markers labeled with letters (A, B, C, ...) represent each selected location.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Built With
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+React - JavaScript library for building user interfaces.
+@react-google-maps/api - Library for integrating Google Maps into React applications.
+use-places-autocomplete - Library for implementing Places Autocomplete functionality.
+@reach/combobox - Library for creating accessible combobox dropdowns.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## License
 
-## Learn More
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Acknowledgments
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Thanks to the creators and maintainers of the @react-google-maps/api, use-places-autocomplete, and @reach/combobox libraries for their valuable contributions to the project.
+Notes
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project is a demonstration of integrating Google Maps functionality into a React application and is not intended for production use without further development and improvements.
+Make sure to follow the Google Maps API usage policies and billing requirements when deploying the application to production.
