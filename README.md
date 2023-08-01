@@ -1,4 +1,6 @@
-### React Google Maps Directions App
+# React Google Maps Directions App
+
+![image](https://github.com/SimWPEric/GoogleMapsAPI/assets/122194518/1e16ea65-2e41-4ee6-a378-373955b2825b)
 
 This is a React web application that allows users to select multiple locations and get driving directions between them using the Google Maps API. The app uses the @react-google-maps/api library for map rendering and the use-places-autocomplete library for location autocomplete functionality.
 
@@ -7,6 +9,7 @@ This is a React web application that allows users to select multiple locations a
 Search and select multiple locations using the Places Autocomplete feature.
 Display markers on the map for the selected locations.
 Show driving directions between consecutive selected locations on the map.
+
 ## Prerequisites
 
 Before running the application, make sure you have the following:
