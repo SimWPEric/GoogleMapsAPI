@@ -41,8 +41,7 @@ a {
 
 .location-container {
   position: absolute;
-  top: 80px;
-  left: 10px;
+  top: 60px;
   z-index: 10;
 }
 
@@ -61,13 +60,11 @@ a {
 
 @media (max-width: 700px) {
   .places-container {
-    top: auto;
-    bottom: 5px;
-    left: 50%;
+    left: 60%;
   }
 
   .location-container-distance{
-    width: 200px;
+    width: 170px;
     padding: 10px;
     border-radius: 20px;
     margin: 10px;
