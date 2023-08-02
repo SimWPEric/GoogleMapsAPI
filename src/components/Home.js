@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker, DirectionsRenderer} from "@react-google-maps/api";
 import usePlacesAutocomplete, {getGeocode, getLatLng} from "use-places-autocomplete";
 import {
@@ -6,18 +6,9 @@ import {
 	ComboboxInput,
 	ComboboxPopover,
 	ComboboxList,
-	ComboboxOption,
-	ComboboxOptionText,
+	ComboboxOption
 } from "@reach/combobox"; // to display results and user input 
 import "@reach/combobox/styles.css";
-
-function calculateTotalDistance(directions) {
-  let totalDistance = 0;
-  for (const dir of directions) {
-    totalDistance += dir.routes[0].legs[0].distance.value;
-  }
-  return totalDistance;
-}
  
 function Home() {
     const { isLoaded } = useLoadScript({
@@ -32,16 +23,15 @@ function Home() {
 function Map() {
     const [center, setCenter] = useState({ lat: 1.3521, lng: 103.8198 });
     const [zoom, setZoom] = useState(12);
-    const [selected, setSelected] = useState([]); // contains {lat, lng}
+    const [markers, setMarkers] = useState([]); // {address: address, latlng: {lat, lng}}
     const [directions, setDirections] = useState([]);
-    const [locations, setLocations] = useState([]); // contains address name 
     const service = new window.google.maps.DirectionsService();
   
     useEffect(() => {
       setDirections([])
-      for (let i = 0; i < selected.length - 1; i++) {
-        const from = selected[i];
-        const to = selected[i + 1];
+      for (let i = 0; i < markers.length - 1; i++) {
+        const from = markers[i].latlng;
+        const to = markers[i + 1].latlng;
         service.route(
           {
             origin: from,
@@ -55,60 +45,64 @@ function Map() {
           }
         );
       }
-    }, [selected.length]);
+    }, [markers.length]);
 
-    const handleSelectLocation = async (address) => {
+    const handleSelectLocation = async (marker) => {
         setZoom(12)
         setTimeout(() => {
             setZoom(15); 
         }, 700);
-        const results = await getGeocode( {address} );
-        const {lat, lng} = await getLatLng(results[0]);
-        setCenter({lat, lng});
+        setCenter(marker.latlng);
+    }
+
+    const calculateTotalDistance = (directions) => {
+      let totalDistance = 0;
+      for (let dir of directions) {
+        totalDistance += dir.routes[0].legs[0].distance.value;
+      }
+      return totalDistance;
     }
     
     return (
       <>
         <div className="places-container">
-          <PlacesAutoComplete setSelected={setSelected} setLocations={setLocations} />
+          <PlacesAutoComplete setMarkers={setMarkers}/>
         </div>
 
         <div className="location-container">
             <div className="location-container-distance">
               {`Total distance: ${(calculateTotalDistance(directions) / 1000).toFixed(2)} km`}
             </div>
-            {locations.map((locationName, index) => (
-                <div className="location-container-item" onClick={() => handleSelectLocation(locationName)}>
-                    {locationName}
+            {markers.map((marker, index) => (
+                <div className="location-container-item" onClick={() => handleSelectLocation(marker)}>
+                    {marker.address}
                 </div>
             ))}
         </div>
   
         <GoogleMap zoom={zoom} center={center} mapContainerClassName="map-container">
-          {directions &&
-            directions.map((dir, index) => (
-                <>
-                    <DirectionsRenderer 
-                        directions={dir} 
-                        options={{
-                            suppressMarkers: true,
-                            polylineOptions: {
-                                strokeColor: "blue",
-                                strokeOpacity: 0.8,
-                                strokeWeight: 3
-                            }
-                        }}
-                    /> 
-                </>
-            ))}
-          {selected.map((x, index) => (
+          {directions && directions.map((dir, index) => (
+            <DirectionsRenderer 
+              directions={dir} 
+              options={{
+                suppressMarkers: true,
+                polylineOptions: {
+                    strokeColor: "blue",
+                    strokeOpacity: 0.8,
+                    strokeWeight: 3
+                }
+              }}
+            /> 
+          ))}
+          {markers.map((x, index) => (
             <Marker 
               key={index} 
-              position={x} 
+              position={x.latlng}
               label={{
                 text: String.fromCharCode(65 + index),
                 color: "white"
               }}
+              // icon={"http://maps.google.com/mapfiles/ms/icons/green-dot.png"}
             />
           ))}
         </GoogleMap>
@@ -116,7 +110,7 @@ function Map() {
     );
   }
 
-function PlacesAutoComplete( {setSelected, setLocations } ) {
+function PlacesAutoComplete( { setMarkers } ) {
     const {
         ready,
         value,
@@ -128,15 +122,10 @@ function PlacesAutoComplete( {setSelected, setLocations } ) {
     const handleSelect = async (address) => {
         setValue(address, false);
         clearSuggestions(); 
-
-        // address -> geocode -> lat lng 
-        
         const results = await getGeocode( {address} );
         const {lat, lng} = await getLatLng(results[0]);
-        setSelected((list) => [...list, {lat, lng}])
-
+        setMarkers((list) => [...list, {address: address, latlng: {lat, lng}}])
         setValue("") 
-        setLocations((list) => [...list, address])
     }
 
     return (
@@ -152,8 +141,8 @@ function PlacesAutoComplete( {setSelected, setLocations } ) {
               <ComboboxList>
                   {status === "OK" && data.map(({place_id, description}) => 
                       <ComboboxOption 
-                          key={place_id}
-                          value={description}
+                        key={place_id}
+                        value={description}
                       />
                   )}
               </ComboboxList>
